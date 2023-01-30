@@ -112,7 +112,7 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 	//generate token
 	claims := jwt.MapClaims{}
 	claims["id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 2).Unix() // 2 jam expired
+	claims["exp"] = time.Now().Add(time.Hour * 22).Unix() // 2 jam expired
 
 	token, errGenerateToken := jwtToken.GenerateToken(&claims)
 	if errGenerateToken != nil {
