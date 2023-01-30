@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -14,8 +15,8 @@ type House struct {
 	Price     float64         `json:"price" gorm:"type: decimal(10,2)"`
 	TypeRent  string          `json:"type_rent" gorm:"type: varchar(255)"`
 	Amenities json.RawMessage `json:"amenities" gorm:"type:json"`
-	BedRoom   int             `json:"bed_room" gorm:"type: int"`
-	BathRoom  int             `json:"bath_room" gorm:"type: int"`
+	Bedroom   int             `json:"bedroom" gorm:"type: int"`
+	Bathroom  int             `json:"bathroom" gorm:"type: int"`
 	CreatedAt time.Time       `json:"-"`
 	UpdatedAt time.Time       `json:"-"`
 }
@@ -28,10 +29,11 @@ type HouseResponse struct {
 	Price     float64         `json:"price"`
 	TypeRent  string          `json:"type_rent"`
 	Amenities json.RawMessage `json:"amenities"`
-	BedRoom   int             `json:"bed_room"`
-	BathRoom  int             `json:"bath_room"`
+	Bedroom   int             `json:"bedroom"`
+	Bathroom  int             `json:"bathroom"`
 }
 
 func (HouseResponse) TableName() string {
-	return "users"
+	fmt.Println("houses DB is created")
+	return "houses"
 }

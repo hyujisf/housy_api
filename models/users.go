@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type User struct {
 	ID        int            `json:"id" gorm:"primary_key:auto_increment"`
@@ -22,5 +25,6 @@ type UsersProfileResponse struct {
 }
 
 func (UsersProfileResponse) TableName() string {
+	fmt.Println("Users Tables is created")
 	return "users"
 }

@@ -8,6 +8,6 @@ type HouseResponse struct {
 	Price     string `json:"price" form:"price" validate:"required"`
 	TypeRent  string `json:"type_rent" form:"type_rent" validate:"required"`
 	Amenities string `json:"amenities" form:"amenities" validate:"required"`
-	BedRoom   string `json:"bed_room" form:"bedRoom" validate:"required"`
-	BathRoom  string `json:"bath_room" form:"bathRoom" validate:"required"`
+	Bedroom   string `json:"bedroom" form:"bedroom" validate:"required"`
+	Bathroom  string `json:"bathroom" form:"bathroom" validate:"required"`
 }

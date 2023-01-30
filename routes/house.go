@@ -9,8 +9,8 @@ import (
 )
 
 func HouseRoutes(r *mux.Router) {
-	userRepository := repositories.RepositoryUser(mysql.DB)
-	h := handlers.HandlerAuth(userRepository)
+	houseRepository := repositories.RepositoryHouse(mysql.DB)
+	h := handlers.HandlerHouse(houseRepository)
 
 	r.HandleFunc("/house", h.AddHouse).Methods("POST")
 	// r.HandleFunc("/houses", h.FindHouses).Methods("GET")

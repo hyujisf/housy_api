@@ -46,8 +46,8 @@ func (h *handlerHouse) AddHouse(w http.ResponseWriter, r *http.Request) {
 		Price:     request.Price,
 		TypeRent:  request.TypeRent,
 		Amenities: request.Amenities,
-		BedRoom:   request.BedRoom,
-		BathRoom:  request.BathRoom,
+		Bedroom:   request.Bedroom,
+		Bathroom:  request.Bathroom,
 	}
 
 	data, err := h.HouseRepository.AddHouse(house)
@@ -64,13 +64,14 @@ func (h *handlerHouse) AddHouse(w http.ResponseWriter, r *http.Request) {
 
 func convertResponseHouse(u models.House) models.HouseResponse {
 	return models.HouseResponse{
+		ID:        u.ID,
 		Name:      u.Name,
 		CityId:    u.CityId,
 		Address:   u.Address,
 		Price:     u.Price,
 		TypeRent:  u.TypeRent,
 		Amenities: u.Amenities,
-		BedRoom:   u.BedRoom,
-		BathRoom:  u.BathRoom,
+		Bedroom:   u.Bedroom,
+		Bathroom:  u.Bathroom,
 	}
 }
