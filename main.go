@@ -36,5 +36,5 @@ func main() {
 	routes.RouteInit(r.PathPrefix("/api/" + VERSION).Subrouter())
 
 	fmt.Println("Server is running on http://" + SERVER_NAME + ":" + PORT + "/api/" + VERSION)
-	http.ListenAndServe("localhost:"+PORT, r)
+	http.ListenAndServe(SERVER_NAME+":"+PORT, r)
 }
