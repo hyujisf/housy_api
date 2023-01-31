@@ -16,7 +16,7 @@ func RepositoryAuth(db *gorm.DB) *repository {
 }
 
 func (r *repository) Register(user models.User) (models.User, error) {
-	err := r.db.Create(&user).Error
+	err := r.db.Preload("ListAsId").Create(&user).Error
 
 	return user, err
 }

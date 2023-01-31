@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type User struct {
 	Username  string         `json:"username" gorm:"type: varchar(255)"`
 	Password  string         `json:"-" gorm:"type: varchar(255)"`
 	ListAs    ListAsResponse `json:"listAs" gorm:"foreignKey:ListAsId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	ListAsId  int            `json:"list_as_id"`
+	ListAsId  int            `json:"-"`
 	Gender    string         `json:"gender" gorm:"type: varchar(255)"`
 	Address   string         `json:"address" gorm:"type: text"`
 	CreatedAt time.Time      `json:"-"`
@@ -25,6 +24,5 @@ type UsersProfileResponse struct {
 }
 
 func (UsersProfileResponse) TableName() string {
-	fmt.Println("Users Tables is created")
 	return "users"
 }

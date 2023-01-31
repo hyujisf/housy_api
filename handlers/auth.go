@@ -70,8 +70,12 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	registerResponse := authdto.RegisterResponse{
+		Username: data.Username,
+		Message:  "SignUp Successfully",
+	}
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponse(data)}
+	response := dto.SuccessResult{Code: http.StatusOK, Data: registerResponse}
 	json.NewEncoder(w).Encode(response)
 }
 func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
@@ -112,7 +116,9 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 	//generate token
 	claims := jwt.MapClaims{}
 	claims["id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 22).Unix() // 2 jam expired
+	claims["username"] = user.Username
+	claims["list_as"] = user.ListAs
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // 2 jam expired
 
 	token, errGenerateToken := jwtToken.GenerateToken(&claims)
 	if errGenerateToken != nil {
@@ -123,7 +129,6 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 
 	loginResponse := authdto.LoginResponse{
 		Username: user.Username,
-		Password: user.Password,
 		Token:    token,
 	}
 

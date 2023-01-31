@@ -35,6 +35,9 @@ func main() {
 
 	routes.RouteInit(r.PathPrefix("/api/" + VERSION).Subrouter())
 
+	// Initialization "uploads" folder to public here ...
+	r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
+
 	fmt.Println("Server is running on http://" + SERVER_NAME + ":" + PORT + "/api/" + VERSION)
 	http.ListenAndServe(SERVER_NAME+":"+PORT, r)
 }
