@@ -10,7 +10,9 @@ import (
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
+	"gorm.io/datatypes"
 )
 
 type handlerProperty struct {
@@ -56,19 +58,42 @@ func (h *handlerProperty) GetProperty(w http.ResponseWriter, r *http.Request) {
 func (h *handlerProperty) AddProperty(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(propertiesdto.AddPropertyRequest)
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+	// get data user token
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+	list_as := int(userInfo["list_as_id"].(float64))
+
+	if list_as != 1 {
+		w.WriteHeader(http.StatusUnauthorized)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: "unauthorized"}
 		json.NewEncoder(w).Encode(response)
 		return
+	}
+	// Get dataFile from midleware and store to filename variable here ...
+	dataContex := r.Context().Value("dataFile") // add this code
+	filename := dataContex.(string)             // add this code
+	city_id, _ := strconv.Atoi(r.FormValue("city_id"))
+	price, _ := strconv.Atoi(r.FormValue("price"))
+	bedroom, _ := strconv.Atoi(r.FormValue("bedroom"))
+	bathroom, _ := strconv.Atoi(r.FormValue("bathroom"))
+
+	request := propertiesdto.PropertyRequest{
+		Name:      r.FormValue("name"),
+		CityId:    city_id,
+		Address:   r.FormValue("address"),
+		Price:     float64(price),
+		TypeRent:  r.FormValue("type_rent"),
+		Amenities: datatypes.JSON(r.FormValue("amenities")),
+		Bedroom:   bedroom,
+		Bathroom:  bathroom,
+		Image:     filename,
 	}
 
 	validation := validator.New()
 	err := validation.Struct(request)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -82,6 +107,8 @@ func (h *handlerProperty) AddProperty(w http.ResponseWriter, r *http.Request) {
 		Amenities: request.Amenities,
 		Bedroom:   request.Bedroom,
 		Bathroom:  request.Bathroom,
+		Image:     request.Image,
+		UserID:    userId,
 	}
 
 	data, err := h.PropertyRepository.AddProperty(property)
@@ -91,6 +118,8 @@ func (h *handlerProperty) AddProperty(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 	}
 
+	property, _ = h.PropertyRepository.GetProperty(property.ID)
+
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseProperty(data)}
 	json.NewEncoder(w).Encode(response)
@@ -99,7 +128,7 @@ func (h *handlerProperty) AddProperty(w http.ResponseWriter, r *http.Request) {
 func (h *handlerProperty) UpdateProperty(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(propertiesdto.UpdatePropertyRequest)
+	request := new(propertiesdto.PropertyUpdateRequest)
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
